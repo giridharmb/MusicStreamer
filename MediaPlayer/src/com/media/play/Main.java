@@ -37,6 +37,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingConstants;
 
 public class Main extends JFrame {
 
@@ -46,17 +47,20 @@ public class Main extends JFrame {
 	private static MediaPlayer mediaPlayer = null;
 	private static int SONG_COUNT = 0;
 	private static int CURRENT_INDEX = 0;
-	
-	private static String songDataFile = "__songs__.txt"; 	// this file will have all the songs ex:
+	private static String configFile = "_stream_.conf";
+	private static String songDataFile = "_songs_.txt"; 	// this file will have all the songs ex:
 													// http://199.199.199.31/songs/1.mp3
 													// http://199.199.199.31/songs/2.mp3
 	
-	private static String accessUrl = "http://localhost/~giri/" + songDataFile;
+	//private static String accessUrl = "http://localhost/~giri/" + songDataFile;
+	private static String accessUrl = getHttpUrl();
 	// change "localhost" above to point to a URL
 	
+		
 	
-	private LinkedList<String> getFileLines(String filePath) {
+	private static LinkedList<String> getFileLines(String filePath) {
 		File f = new File(filePath);
+		BufferedReader br = null;
 		if(!f.exists()) {
 			System.out.println("@ File " + filePath + " does not exist !");
 			return null;
@@ -66,7 +70,7 @@ public class Main extends JFrame {
 		try {
 			FileInputStream fstream = new FileInputStream(filePath);
 			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
 			while((strLine = br.readLine()) != null ){
 				ll.add(strLine);
@@ -76,9 +80,46 @@ public class Main extends JFrame {
 			System.out.println("@ getFileLines(): Error in reading data from file : " + filePath);
 			e.printStackTrace();
 		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println("@ getFileLines(): Read " + Integer.toString(count) + " lines from the file " + filePath);
 		}
 		return ll;
+	}
+	
+	private static String getPropertyFromConfigFile(String property) {
+		LinkedList<String> ll = new LinkedList<String>();
+		String[] keyValueArray;
+		String valueToReturn = null;
+		File f = new File(getUserHomeDirectory()+"/"+configFile);
+		if(!f.exists()) {
+			System.out.println("@ configFile " + configFile + " does not exist in user's home directory");
+			return null;
+		}
+		ll = getFileLines(getUserHomeDirectory()+"/"+configFile);
+		for(String line : ll) {
+			if(line.contains(property)){
+				System.out.println("@ Property " + property + " found in the config file " + configFile);
+				String currentLine = line;
+				keyValueArray = currentLine.split("@");
+				System.out.println("@ keyValueArray >>");
+				for(String e : keyValueArray) {
+					System.out.println("element: " + e);
+				}
+				valueToReturn = keyValueArray[1];
+				break;
+			}
+		}
+		System.out.println("@ Returning the value " + valueToReturn + " for the property " + property);
+		return valueToReturn;
+	}
+	
+	private static String getHttpUrl() {
+		return getPropertyFromConfigFile("PLAYLIST_FILE");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -239,17 +280,19 @@ public class Main extends JFrame {
 	 * Create the frame.
 	 */
 	public Main() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/qt3logo.jpg")));
 		setResizable(false);
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 543, 208);
+		setBounds(100, 100, 572, 417);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		final JButton btnNewButton = new JButton("Play");
+		btnNewButton.setIcon(new ImageIcon("resources/images/icon_play.png"));
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -261,46 +304,51 @@ public class Main extends JFrame {
 				_playSongIndex(CURRENT_INDEX);
 			}
 		});
-		btnNewButton.setBounds(42, 42, 206, 29);
+		btnNewButton.setBounds(35, 39, 232, 87);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Stop");
+		btnNewButton_1.setIcon(new ImageIcon("resources/images/icon_stop.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_stopPlaying();
 			}
 		});
-		btnNewButton_1.setBounds(42, 124, 206, 29);
+		btnNewButton_1.setBounds(35, 270, 232, 87);
 		contentPane.add(btnNewButton_1);
 		
-		JButton btnPlayNext = new JButton("Play Next");
+		JButton btnPlayNext = new JButton("Next");
+		btnPlayNext.setIcon(new ImageIcon("resources/images/icon_next.png"));
 		btnPlayNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playNext();
 			}
 		});
-		btnPlayNext.setBounds(295, 42, 206, 29);
+		btnPlayNext.setBounds(299, 39, 232, 87);
 		contentPane.add(btnPlayNext);
 		
-		JButton btnPlayPrevious = new JButton("Play Previous");
+		JButton btnPlayPrevious = new JButton("Previous");
+		btnPlayPrevious.setIcon(new ImageIcon("resources/images/icon_previous.png"));
 		btnPlayPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playPrevious();
 			}
 		});
-		btnPlayPrevious.setBounds(295, 83, 206, 29);
+		btnPlayPrevious.setBounds(299, 154, 232, 87);
 		contentPane.add(btnPlayPrevious);
 		
-		JButton btnPlayRandom = new JButton("Play Random");
+		JButton btnPlayRandom = new JButton("Random");
+		btnPlayRandom.setIcon(new ImageIcon("resources/images/icon_random.png"));
 		btnPlayRandom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playRandomSong();
 			}
 		});
-		btnPlayRandom.setBounds(42, 83, 206, 29);
+		btnPlayRandom.setBounds(35, 154, 232, 87);
 		contentPane.add(btnPlayRandom);
 		
 		JButton btnExit = new JButton("Exit");
+		btnExit.setIcon(new ImageIcon("resources/images/icon_exit.png"));
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("@ Exiting...");
@@ -308,7 +356,7 @@ public class Main extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnExit.setBounds(295, 124, 206, 29);
+		btnExit.setBounds(299, 270, 232, 87);
 		contentPane.add(btnExit);
 		
 		if(!SystemTray.isSupported()) {
