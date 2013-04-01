@@ -153,6 +153,26 @@ public class Main extends JFrame {
 		}
 	}
 	
+	/*
+	JButton btnNewButton_1 = new JButton("Stop");
+	btnNewButton_1.setIcon(new ImageIcon("resources/images/icon_stop.png"));
+	btnNewButton_1.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			_stopPlaying();
+		}
+	});
+	*/
+	
+	private static ImageIcon getImageIcon(String fileName) {
+		ImageIcon imgIcon = new ImageIcon(fileName);
+		return imgIcon;
+	}
+	
+	private static void setImageForButton(JButton btn, String imageFilePath) {
+		ImageIcon icon = getImageIcon(imageFilePath);
+		btn.setIcon(icon);
+	}
+	
 	private LinkedList<String> getSongsFromFile() {
 		LinkedList<String> ll = new LinkedList<String>();
 		ll = getFileLines(getCompletePathToLocalFile());
@@ -296,7 +316,11 @@ public class Main extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				
+				setImageForButton(btnNewButton, "resources/hover_images/icon_play.png");
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnNewButton, "resources/images/icon_play.png");
 			}
 		});
 		btnNewButton.addActionListener(new ActionListener() {
@@ -307,7 +331,17 @@ public class Main extends JFrame {
 		btnNewButton.setBounds(35, 39, 232, 87);
 		contentPane.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("Stop");
+		final JButton btnNewButton_1 = new JButton("Stop");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setImageForButton(btnNewButton_1, "resources/hover_images/icon_stop.png");
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnNewButton_1, "resources/images/icon_stop.png");
+			}
+		});
 		btnNewButton_1.setIcon(new ImageIcon("resources/images/icon_stop.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -317,7 +351,17 @@ public class Main extends JFrame {
 		btnNewButton_1.setBounds(35, 270, 232, 87);
 		contentPane.add(btnNewButton_1);
 		
-		JButton btnPlayNext = new JButton("Next");
+		final JButton btnPlayNext = new JButton("Next");
+		btnPlayNext.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setImageForButton(btnPlayNext, "resources/hover_images/icon_next.png");
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnPlayNext, "resources/images/icon_next.png");
+			}
+		});
 		btnPlayNext.setIcon(new ImageIcon("resources/images/icon_next.png"));
 		btnPlayNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -327,7 +371,17 @@ public class Main extends JFrame {
 		btnPlayNext.setBounds(299, 39, 232, 87);
 		contentPane.add(btnPlayNext);
 		
-		JButton btnPlayPrevious = new JButton("Previous");
+		final JButton btnPlayPrevious = new JButton("Previous");
+		btnPlayPrevious.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setImageForButton(btnPlayPrevious, "resources/hover_images/icon_previous.png");
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnPlayPrevious, "resources/images/icon_previous.png");
+			}
+		});
 		btnPlayPrevious.setIcon(new ImageIcon("resources/images/icon_previous.png"));
 		btnPlayPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -337,7 +391,17 @@ public class Main extends JFrame {
 		btnPlayPrevious.setBounds(299, 154, 232, 87);
 		contentPane.add(btnPlayPrevious);
 		
-		JButton btnPlayRandom = new JButton("Random");
+		final JButton btnPlayRandom = new JButton("Random");
+		btnPlayRandom.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setImageForButton(btnPlayRandom, "resources/hover_images/icon_random.png");				
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnPlayRandom, "resources/images/icon_random.png");
+			}
+		});
 		btnPlayRandom.setIcon(new ImageIcon("resources/images/icon_random.png"));
 		btnPlayRandom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -347,7 +411,20 @@ public class Main extends JFrame {
 		btnPlayRandom.setBounds(35, 154, 232, 87);
 		contentPane.add(btnPlayRandom);
 		
-		JButton btnExit = new JButton("Exit");
+		final JButton btnExit = new JButton("Exit");
+		btnExit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setImageForButton(btnExit, "resources/hover_images/icon_exit.png");
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setImageForButton(btnExit, "resources/images/icon_exit.png");
+			}
+		});
 		btnExit.setIcon(new ImageIcon("resources/images/icon_exit.png"));
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
