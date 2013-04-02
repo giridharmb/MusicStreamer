@@ -14,11 +14,13 @@ import java.awt.TrayIcon;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -56,7 +58,28 @@ public class Main extends JFrame {
 	private static String accessUrl = getHttpUrl();
 	// change "localhost" above to point to a URL
 	
+	private static PopupMenu menu = new PopupMenu();
+	
+	private static ImageIcon[] arrayOfImageIcons = new ImageIcon[20];
+	
+		private static int ICON_NORMAL_PLAY = 0;
+		private static int ICON_HOVER_PLAY = 1;
 		
+		private static int ICON_NORMAL_NEXT = 2;
+		private static int ICON_HOVER_NEXT = 3;
+		
+		private static int ICON_NORMAL_PREVIOUS = 4;
+		private static int ICON_HOVER_PREVIOUS = 5;
+		
+		private static int ICON_NORMAL_STOP = 6;
+		private static int ICON_HOVER_STOP = 7;
+		
+		private static int ICON_NORMAL_RANDOM = 8;
+		private static int ICON_HOVER_RANDOM = 9; 
+				
+		private static int ICON_NORMAL_EXIT = 10;
+		private static int ICON_HOVER_EXIT = 11;
+	
 	
 	private static LinkedList<String> getFileLines(String filePath) {
 		File f = new File(filePath);
@@ -162,15 +185,29 @@ public class Main extends JFrame {
 		}
 	});
 	*/
-	
-	private static ImageIcon getImageIcon(String fileName) {
-		ImageIcon imgIcon = new ImageIcon(fileName);
-		return imgIcon;
+	private static void initializeIcons() {
+		arrayOfImageIcons[ICON_NORMAL_PLAY] = new ImageIcon("resources/images/icon_play.png");
+		arrayOfImageIcons[ICON_HOVER_PLAY] = new ImageIcon("resources/hover_images/icon_play.png");
+		
+		arrayOfImageIcons[ICON_NORMAL_NEXT] = new ImageIcon("resources/images/icon_next.png");
+		arrayOfImageIcons[ICON_HOVER_NEXT] = new ImageIcon("resources/hover_images/icon_next.png");
+		
+		arrayOfImageIcons[ICON_NORMAL_PREVIOUS] = new ImageIcon("resources/images/icon_previous.png");
+		arrayOfImageIcons[ICON_HOVER_PREVIOUS] = new ImageIcon("resources/hover_images/icon_previous.png");
+		
+		arrayOfImageIcons[ICON_NORMAL_RANDOM] = new ImageIcon("resources/images/icon_random.png");
+		arrayOfImageIcons[ICON_HOVER_RANDOM] = new ImageIcon("resources/hover_images/icon_random.png");
+		
+		arrayOfImageIcons[ICON_NORMAL_STOP] = new ImageIcon("resources/images/icon_stop.png");
+		arrayOfImageIcons[ICON_HOVER_STOP] = new ImageIcon("resources/hover_images/icon_stop.png");
+		
+		arrayOfImageIcons[ICON_NORMAL_EXIT] = new ImageIcon("resources/images/icon_exit.png");
+		arrayOfImageIcons[ICON_HOVER_EXIT] = new ImageIcon("resources/hover_images/icon_exit.png");
 	}
-	
-	private static void setImageForButton(JButton btn, String imageFilePath) {
-		ImageIcon icon = getImageIcon(imageFilePath);
-		btn.setIcon(icon);
+		
+	private static void setImageForButtonNew(JButton btn, int iconType) {
+		//ImageIcon icon = getImageIcon(imageFilePath);
+		btn.setIcon(arrayOfImageIcons[iconType]);
 	}
 	
 	private LinkedList<String> getSongsFromFile() {
@@ -316,11 +353,13 @@ public class Main extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnNewButton, "resources/hover_images/icon_play.png");
+				//setImageForButton(btnNewButton, "resources/hover_images/icon_play.png");
+				setImageForButtonNew(btnNewButton,ICON_HOVER_PLAY);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnNewButton, "resources/images/icon_play.png");
+				//setImageForButton(btnNewButton, "resources/images/icon_play.png");
+				setImageForButtonNew(btnNewButton,ICON_NORMAL_PLAY);
 			}
 		});
 		btnNewButton.addActionListener(new ActionListener() {
@@ -335,11 +374,11 @@ public class Main extends JFrame {
 		btnNewButton_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnNewButton_1, "resources/hover_images/icon_stop.png");
+				setImageForButtonNew(btnNewButton_1,ICON_HOVER_STOP);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnNewButton_1, "resources/images/icon_stop.png");
+				setImageForButtonNew(btnNewButton_1,ICON_NORMAL_STOP);
 			}
 		});
 		btnNewButton_1.setIcon(new ImageIcon("resources/images/icon_stop.png"));
@@ -355,11 +394,11 @@ public class Main extends JFrame {
 		btnPlayNext.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnPlayNext, "resources/hover_images/icon_next.png");
+				setImageForButtonNew(btnPlayNext,ICON_HOVER_NEXT);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnPlayNext, "resources/images/icon_next.png");
+				setImageForButtonNew(btnPlayNext,ICON_NORMAL_NEXT);
 			}
 		});
 		btnPlayNext.setIcon(new ImageIcon("resources/images/icon_next.png"));
@@ -375,11 +414,11 @@ public class Main extends JFrame {
 		btnPlayPrevious.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnPlayPrevious, "resources/hover_images/icon_previous.png");
+				setImageForButtonNew(btnPlayPrevious,ICON_HOVER_PREVIOUS);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnPlayPrevious, "resources/images/icon_previous.png");
+				setImageForButtonNew(btnPlayPrevious,ICON_NORMAL_PREVIOUS);
 			}
 		});
 		btnPlayPrevious.setIcon(new ImageIcon("resources/images/icon_previous.png"));
@@ -395,11 +434,11 @@ public class Main extends JFrame {
 		btnPlayRandom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnPlayRandom, "resources/hover_images/icon_random.png");				
+				setImageForButtonNew(btnPlayRandom,ICON_HOVER_RANDOM);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnPlayRandom, "resources/images/icon_random.png");
+				setImageForButtonNew(btnPlayRandom,ICON_NORMAL_RANDOM);
 			}
 		});
 		btnPlayRandom.setIcon(new ImageIcon("resources/images/icon_random.png"));
@@ -418,11 +457,11 @@ public class Main extends JFrame {
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setImageForButton(btnExit, "resources/hover_images/icon_exit.png");
+				setImageForButtonNew(btnExit,ICON_HOVER_EXIT);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				setImageForButton(btnExit, "resources/images/icon_exit.png");
+				setImageForButtonNew(btnExit,ICON_NORMAL_EXIT);
 			}
 		});
 		btnExit.setIcon(new ImageIcon("resources/images/icon_exit.png"));
@@ -436,6 +475,7 @@ public class Main extends JFrame {
 		btnExit.setBounds(299, 270, 232, 87);
 		contentPane.add(btnExit);
 		
+		
 		if(!SystemTray.isSupported()) {
 			System.out.println("@ System Tray is not supported !");
 		} else {
@@ -443,8 +483,8 @@ public class Main extends JFrame {
 			SystemTray tray = SystemTray.getSystemTray();
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			Image image = toolkit.getImage("resources/images/play-button-01.png");
-			
-			PopupMenu menu = new PopupMenu();
+		
+
 			MenuItem messageItem_play          = new MenuItem("Play");
 			MenuItem messageItem_stop          = new MenuItem("Stop");
 			MenuItem messageItem_playnext      = new MenuItem("Next");
@@ -458,6 +498,7 @@ public class Main extends JFrame {
 			menu.add(messageItem_playprevious);
 			menu.add(messageItem_stop);
 			menu.add(messageItem_exit);
+			
 			
 			messageItem_play.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -502,8 +543,7 @@ public class Main extends JFrame {
 				}
 			});
 			
-			
-			
+					
 			TrayIcon icon = new TrayIcon(image,"System Tray", menu);
 			icon.setImageAutoSize(true);
 			try {
@@ -514,5 +554,7 @@ public class Main extends JFrame {
 			}
 			
 		}
+		
+		initializeIcons();
 	}
 }
