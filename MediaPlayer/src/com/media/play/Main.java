@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -37,16 +38,25 @@ import java.util.Random;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingConstants;
+import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import javax.swing.JLabel;
 
 public class Main extends JFrame {
 
 	private JPanel contentPane;
 	private static String song = null;
 	private static Media audioFile = null;
-	private static MediaPlayer mediaPlayer = null;
+	public static MediaPlayer mediaPlayer = null;
 	private static int SONG_COUNT = 0;
 	private static int CURRENT_INDEX = 0;
 	private static String configFile = "_stream_.conf";
@@ -59,6 +69,8 @@ public class Main extends JFrame {
 	// change "localhost" above to point to a URL
 	
 	private static PopupMenu menu = new PopupMenu();
+	public static JProgressBar progressBar = new JProgressBar();
+	public static JSlider slider = new JSlider();
 	
 	private static ImageIcon[] arrayOfImageIcons = new ImageIcon[20];
 	
@@ -325,6 +337,7 @@ public class Main extends JFrame {
 					Main frame = new Main();
 					frame.setVisible(true);
 					downloadSongFile();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -337,12 +350,19 @@ public class Main extends JFrame {
 	 * Create the frame.
 	 */
 	public Main() {
+		try {
+	            // Set cross-platform Java L&F (also called "Metal")
+	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch(Exception e) {
+	    	System.out.println("Could not change the look and feel !");
+	    }
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/qt3logo.jpg")));
 		setResizable(false);
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 572, 417);
+		setBounds(100, 100, 572, 513);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -475,6 +495,10 @@ public class Main extends JFrame {
 		btnExit.setBounds(299, 270, 232, 87);
 		contentPane.add(btnExit);
 		
+
+		progressBar.setBounds(35, 418, 232, 39);
+		contentPane.add(progressBar);
+		
 		
 		if(!SystemTray.isSupported()) {
 			System.out.println("@ System Tray is not supported !");
@@ -556,5 +580,47 @@ public class Main extends JFrame {
 		}
 		
 		initializeIcons();
+		
+		Thread t = new Thread(new ProgressBarUpdater());
+		
+		btnNewButton.setFocusPainted(false);
+		btnNewButton_1.setFocusPainted(false);
+		btnPlayNext.setFocusPainted(false);
+		btnPlayPrevious.setFocusPainted(false);
+		btnPlayRandom.setFocusPainted(false);
+		btnExit.setFocusPainted(false);
+		slider.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				
+				
+				
+			}
+		});
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if(mediaPlayer != null) {
+					int currentTime = (int) mediaPlayer.getCurrentTime().toSeconds();
+					int totalTime = (int) mediaPlayer.getTotalDuration().toSeconds();
+					
+					slider.setMaximum(totalTime);
+					
+					Duration d = new Duration((double) slider.getValue() * 1000.0);
+					System.out.println("@ setting duration to " + Double.toString(d.toSeconds()) + " secs");
+					mediaPlayer.seek(d);
+				}
+				
+			}
+		});
+		
+		slider.setBounds(279, 418, 252, 39);
+		contentPane.add(slider);
+		
+		JLabel lblProgress = new JLabel("Progress");
+		lblProgress.setBounds(35, 390, 232, 16);
+		contentPane.add(lblProgress);
+		
+		JLabel lblTrackControl = new JLabel("Track Control");
+		lblTrackControl.setBounds(299, 390, 232, 16);
+		contentPane.add(lblTrackControl);
 	}
 }
