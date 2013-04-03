@@ -1,9 +1,24 @@
 package com.media.play;
 
 import java.awt.AWTException;
+import java.awt.CheckboxMenuItem;
+import java.awt.Frame;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -61,11 +76,11 @@ public class Main extends JFrame {
 	private static int CURRENT_INDEX = 0;
 	private static String configFile = "_stream_.conf";
 	private static String songDataFile = "_songs_.txt"; 	// this file will have all the songs ex:
-													// http://199.199.199.31/songs/1.mp3
-													// http://199.199.199.31/songs/2.mp3
+															// http://199.199.199.31/songs/1.mp3
+															// http://199.199.199.31/songs/2.mp3
 	
-	//private static String accessUrl = "http://localhost/~giri/" + songDataFile;
-	private static String accessUrl = getHttpUrl();
+	// private static String accessUrl = "http://localhost/~giri/" + songDataFile;
+  	   private static String accessUrl = getHttpUrl();
 	// change "localhost" above to point to a URL
 	
 	private static PopupMenu menu = new PopupMenu();
@@ -154,7 +169,8 @@ public class Main extends JFrame {
 	}
 	
 	private static String getHttpUrl() {
-		return getPropertyFromConfigFile("PLAYLIST_FILE");
+		//return getPropertyFromConfigFile("PLAYLIST_FILE");
+		return new String("http://199.199.199.31/_songs_.txt");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -197,24 +213,25 @@ public class Main extends JFrame {
 		}
 	});
 	*/
-	private static void initializeIcons() {
-		arrayOfImageIcons[ICON_NORMAL_PLAY] = new ImageIcon("resources/images/icon_play.png");
-		arrayOfImageIcons[ICON_HOVER_PLAY] = new ImageIcon("resources/hover_images/icon_play.png");
+	
+	private void initializeIcons() {
+		arrayOfImageIcons[ICON_NORMAL_PLAY] = new ImageIcon(getClass().getResource("/resources/images/icon_play.png"));
+		arrayOfImageIcons[ICON_HOVER_PLAY] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_play.png"));
 		
-		arrayOfImageIcons[ICON_NORMAL_NEXT] = new ImageIcon("resources/images/icon_next.png");
-		arrayOfImageIcons[ICON_HOVER_NEXT] = new ImageIcon("resources/hover_images/icon_next.png");
+		arrayOfImageIcons[ICON_NORMAL_NEXT] = new ImageIcon(getClass().getResource("/resources/images/icon_next.png"));
+		arrayOfImageIcons[ICON_HOVER_NEXT] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_next.png"));
 		
-		arrayOfImageIcons[ICON_NORMAL_PREVIOUS] = new ImageIcon("resources/images/icon_previous.png");
-		arrayOfImageIcons[ICON_HOVER_PREVIOUS] = new ImageIcon("resources/hover_images/icon_previous.png");
+		arrayOfImageIcons[ICON_NORMAL_PREVIOUS] = new ImageIcon(getClass().getResource("/resources/images/icon_previous.png"));
+		arrayOfImageIcons[ICON_HOVER_PREVIOUS] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_previous.png"));
 		
-		arrayOfImageIcons[ICON_NORMAL_RANDOM] = new ImageIcon("resources/images/icon_random.png");
-		arrayOfImageIcons[ICON_HOVER_RANDOM] = new ImageIcon("resources/hover_images/icon_random.png");
+		arrayOfImageIcons[ICON_NORMAL_RANDOM] = new ImageIcon(getClass().getResource("/resources/images/icon_random.png"));
+		arrayOfImageIcons[ICON_HOVER_RANDOM] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_random.png"));
 		
-		arrayOfImageIcons[ICON_NORMAL_STOP] = new ImageIcon("resources/images/icon_stop.png");
-		arrayOfImageIcons[ICON_HOVER_STOP] = new ImageIcon("resources/hover_images/icon_stop.png");
+		arrayOfImageIcons[ICON_NORMAL_STOP] = new ImageIcon(getClass().getResource("/resources/images/icon_stop.png"));
+		arrayOfImageIcons[ICON_HOVER_STOP] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_stop.png"));
 		
-		arrayOfImageIcons[ICON_NORMAL_EXIT] = new ImageIcon("resources/images/icon_exit.png");
-		arrayOfImageIcons[ICON_HOVER_EXIT] = new ImageIcon("resources/hover_images/icon_exit.png");
+		arrayOfImageIcons[ICON_NORMAL_EXIT] = new ImageIcon(getClass().getResource("/resources/images/icon_exit.png"));
+		arrayOfImageIcons[ICON_HOVER_EXIT] = new ImageIcon(getClass().getResource("/resources/hover_images/icon_exit.png"));
 	}
 		
 	private static void setImageForButtonNew(JButton btn, int iconType) {
@@ -330,6 +347,12 @@ public class Main extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		try {
+			System.setProperty("awt.useSystemAAFontSettings","on");
+			System.setProperty("swing.aatext", "true");
+		} catch(Exception e) {
+			System.out.println("Error - could not enable antialiasing !");
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -357,28 +380,26 @@ public class Main extends JFrame {
 	    	System.out.println("Could not change the look and feel !");
 	    }
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/qt3logo.jpg")));
+		
 		setResizable(false);
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 572, 513);
+		setBounds(100, 100, 572, 502);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		final JButton btnNewButton = new JButton("Play");
-		btnNewButton.setIcon(new ImageIcon("resources/images/icon_play.png"));
+		final JButton btnNewButton = new JButton("");
+		btnNewButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_play.png")));
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				//setImageForButton(btnNewButton, "resources/hover_images/icon_play.png");
 				setImageForButtonNew(btnNewButton,ICON_HOVER_PLAY);
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				//setImageForButton(btnNewButton, "resources/images/icon_play.png");
 				setImageForButtonNew(btnNewButton,ICON_NORMAL_PLAY);
 			}
 		});
@@ -387,10 +408,10 @@ public class Main extends JFrame {
 				_playSongIndex(CURRENT_INDEX);
 			}
 		});
-		btnNewButton.setBounds(35, 39, 232, 87);
+		btnNewButton.setBounds(35, 54, 232, 72);
 		contentPane.add(btnNewButton);
 		
-		final JButton btnNewButton_1 = new JButton("Stop");
+		final JButton btnNewButton_1 = new JButton("");
 		btnNewButton_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -401,16 +422,16 @@ public class Main extends JFrame {
 				setImageForButtonNew(btnNewButton_1,ICON_NORMAL_STOP);
 			}
 		});
-		btnNewButton_1.setIcon(new ImageIcon("resources/images/icon_stop.png"));
+		btnNewButton_1.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_stop.png")));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_stopPlaying();
 			}
 		});
-		btnNewButton_1.setBounds(35, 270, 232, 87);
+		btnNewButton_1.setBounds(35, 285, 232, 72);
 		contentPane.add(btnNewButton_1);
 		
-		final JButton btnPlayNext = new JButton("Next");
+		final JButton btnPlayNext = new JButton("");
 		btnPlayNext.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -421,16 +442,16 @@ public class Main extends JFrame {
 				setImageForButtonNew(btnPlayNext,ICON_NORMAL_NEXT);
 			}
 		});
-		btnPlayNext.setIcon(new ImageIcon("resources/images/icon_next.png"));
+		btnPlayNext.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_next.png")));
 		btnPlayNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playNext();
 			}
 		});
-		btnPlayNext.setBounds(299, 39, 232, 87);
+		btnPlayNext.setBounds(299, 54, 232, 72);
 		contentPane.add(btnPlayNext);
 		
-		final JButton btnPlayPrevious = new JButton("Previous");
+		final JButton btnPlayPrevious = new JButton("");
 		btnPlayPrevious.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -441,16 +462,16 @@ public class Main extends JFrame {
 				setImageForButtonNew(btnPlayPrevious,ICON_NORMAL_PREVIOUS);
 			}
 		});
-		btnPlayPrevious.setIcon(new ImageIcon("resources/images/icon_previous.png"));
+		btnPlayPrevious.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_previous.png")));
 		btnPlayPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playPrevious();
 			}
 		});
-		btnPlayPrevious.setBounds(299, 154, 232, 87);
+		btnPlayPrevious.setBounds(299, 169, 232, 72);
 		contentPane.add(btnPlayPrevious);
 		
-		final JButton btnPlayRandom = new JButton("Random");
+		final JButton btnPlayRandom = new JButton("");
 		btnPlayRandom.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -461,16 +482,16 @@ public class Main extends JFrame {
 				setImageForButtonNew(btnPlayRandom,ICON_NORMAL_RANDOM);
 			}
 		});
-		btnPlayRandom.setIcon(new ImageIcon("resources/images/icon_random.png"));
+		btnPlayRandom.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_random.png")));
 		btnPlayRandom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_playRandomSong();
 			}
 		});
-		btnPlayRandom.setBounds(35, 154, 232, 87);
+		btnPlayRandom.setBounds(35, 169, 232, 72);
 		contentPane.add(btnPlayRandom);
 		
-		final JButton btnExit = new JButton("Exit");
+		final JButton btnExit = new JButton("");
 		btnExit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -484,7 +505,7 @@ public class Main extends JFrame {
 				setImageForButtonNew(btnExit,ICON_NORMAL_EXIT);
 			}
 		});
-		btnExit.setIcon(new ImageIcon("resources/images/icon_exit.png"));
+		btnExit.setIcon(new ImageIcon(getClass().getResource("/resources/images/icon_exit.png")));
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("@ Exiting...");
@@ -492,21 +513,22 @@ public class Main extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnExit.setBounds(299, 270, 232, 87);
+		btnExit.setBounds(299, 285, 232, 72);
 		contentPane.add(btnExit);
 		
 
-		progressBar.setBounds(35, 418, 232, 39);
+		progressBar.setBounds(35, 430, 232, 16);
 		contentPane.add(progressBar);
 		
 		
 		if(!SystemTray.isSupported()) {
 			System.out.println("@ System Tray is not supported !");
 		} else {
+
 			System.out.println("@ System Tray is supported !");
 			SystemTray tray = SystemTray.getSystemTray();
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			Image image = toolkit.getImage("resources/images/play-button-01.png");
+			Image image = toolkit.getImage(getClass().getResource("/resources/images/play-button-01.png"));
 		
 
 			MenuItem messageItem_play          = new MenuItem("Play");
@@ -576,7 +598,6 @@ public class Main extends JFrame {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
 		}
 		
 		initializeIcons();
@@ -589,15 +610,9 @@ public class Main extends JFrame {
 		btnPlayPrevious.setFocusPainted(false);
 		btnPlayRandom.setFocusPainted(false);
 		btnExit.setFocusPainted(false);
-		slider.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				
-				
-				
-			}
-		});
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
+		slider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
 				if(mediaPlayer != null) {
 					int currentTime = (int) mediaPlayer.getCurrentTime().toSeconds();
 					int totalTime = (int) mediaPlayer.getTotalDuration().toSeconds();
@@ -608,10 +623,10 @@ public class Main extends JFrame {
 					System.out.println("@ setting duration to " + Double.toString(d.toSeconds()) + " secs");
 					mediaPlayer.seek(d);
 				}
-				
 			}
 		});
 		
+				
 		slider.setBounds(279, 418, 252, 39);
 		contentPane.add(slider);
 		
@@ -619,8 +634,32 @@ public class Main extends JFrame {
 		lblProgress.setBounds(35, 390, 232, 16);
 		contentPane.add(lblProgress);
 		
-		JLabel lblTrackControl = new JLabel("Track Control");
-		lblTrackControl.setBounds(299, 390, 232, 16);
+		JLabel lblTrackControl = new JLabel("Jump Track");
+		lblTrackControl.setBounds(287, 390, 232, 16);
 		contentPane.add(lblTrackControl);
+		
+		JLabel lblLabel = new JLabel("Play");
+		lblLabel.setBounds(35, 27, 232, 15);
+		contentPane.add(lblLabel);
+		
+		JLabel lblNext = new JLabel("Next");
+		lblNext.setBounds(299, 27, 232, 15);
+		contentPane.add(lblNext);
+		
+		JLabel lblRandom = new JLabel("Random");
+		lblRandom.setBounds(35, 142, 232, 15);
+		contentPane.add(lblRandom);
+		
+		JLabel lblPrevious = new JLabel("Previous");
+		lblPrevious.setBounds(299, 142, 232, 15);
+		contentPane.add(lblPrevious);
+		
+		JLabel lblStop = new JLabel("Stop");
+		lblStop.setBounds(35, 258, 232, 15);
+		contentPane.add(lblStop);
+		
+		JLabel lblExit = new JLabel("Exit");
+		lblExit.setBounds(299, 258, 232, 15);
+		contentPane.add(lblExit);
 	}
 }
