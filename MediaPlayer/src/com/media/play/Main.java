@@ -65,6 +65,11 @@ import javax.swing.event.ChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JCheckBox;
+import javax.swing.JSpinner;
 
 public class Main extends JFrame {
 
@@ -72,7 +77,11 @@ public class Main extends JFrame {
 	private static String song = null;
 	private static Media audioFile = null;
 	public static MediaPlayer mediaPlayer = null;
+	private static JSlider slider_1 = new JSlider();
 	private static int SONG_COUNT = 0;
+
+	public static boolean keepPlaying = false;
+	public static boolean endReached = false;
 	private static int CURRENT_INDEX = 0;
 	private static String configFile = "_stream_.conf";
 	private static String songDataFile = "_songs_.txt"; 	// this file will have all the songs ex:
@@ -106,6 +115,8 @@ public class Main extends JFrame {
 				
 		private static int ICON_NORMAL_EXIT = 10;
 		private static int ICON_HOVER_EXIT = 11;
+		private static JTextField textField;
+		public static JTextField textField_1;
 	
 	
 	private static LinkedList<String> getFileLines(String filePath) {
@@ -170,7 +181,8 @@ public class Main extends JFrame {
 	
 	private static String getHttpUrl() {
 		//return getPropertyFromConfigFile("PLAYLIST_FILE");
-		return new String("http://199.199.199.31/_songs_.txt");
+		return new String("http://localhost/~giri/_songs_.txt");
+		//return new String("http://199.199.199.31/_songs_.txt");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -385,7 +397,7 @@ public class Main extends JFrame {
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 572, 502);
+		setBounds(100, 100, 643, 558);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -661,5 +673,108 @@ public class Main extends JFrame {
 		JLabel lblExit = new JLabel("Exit");
 		lblExit.setBounds(299, 258, 232, 15);
 		contentPane.add(lblExit);
+		
+		
+		slider_1.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int actualIntValue = slider_1.getValue();
+				textField.setText(Integer.toString(actualIntValue));
+				double volumeValue = (double) ((double) slider_1.getValue() / (double) 100.0 );
+				if(volumeValue >= 1.0) {
+					volumeValue = 1.0;
+				}
+				if(volumeValue <= 0.0) {
+					volumeValue = 0.0;
+				}
+				mediaPlayer.setVolume(volumeValue);
+			}
+			
+		});
+		slider_1.setOrientation(SwingConstants.VERTICAL);
+		slider_1.setBounds(558, 54, 42, 352);
+		contentPane.add(slider_1);
+		
+		JLabel lblVolume = new JLabel("Volume");
+		lblVolume.setHorizontalAlignment(SwingConstants.CENTER);
+		lblVolume.setBounds(539, 26, 61, 16);
+		contentPane.add(lblVolume);
+		
+		textField = new JTextField();
+		textField.setBackground(new Color(240, 248, 255));
+		textField.setEditable(false);
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
+		textField.setHorizontalAlignment(SwingConstants.CENTER);
+		textField.setBounds(552, 418, 61, 28);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		final JCheckBox chckbxMute = new JCheckBox("Mute");
+		chckbxMute.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (chckbxMute.isSelected()) {
+					mediaPlayer.setMute(true);
+				}
+				if(!chckbxMute.isSelected()) {
+					mediaPlayer.setMute(false);
+				}
+			}
+		});
+		chckbxMute.setBounds(317, 477, 69, 23);
+		contentPane.add(chckbxMute);
+		
+		final JCheckBox chckbxKeepPlaying = new JCheckBox("Keep Playing");
+		chckbxKeepPlaying.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(chckbxKeepPlaying.isSelected()) {
+					keepPlaying = true;
+				} else {
+					keepPlaying = false;
+				}
+			}
+		});
+		chckbxKeepPlaying.setBounds(421, 477, 116, 23);
+		contentPane.add(chckbxKeepPlaying);
+		
+		textField_1 = new JTextField();
+		textField_1.setEditable(false);
+		textField_1.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_1.setBounds(173, 475, 69, 28);
+		contentPane.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JLabel lblComplete = new JLabel("% Complete");
+		lblComplete.setHorizontalAlignment(SwingConstants.CENTER);
+		lblComplete.setBounds(64, 481, 97, 16);
+		contentPane.add(lblComplete);
+		
+		Thread keepPlayingThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(true) {
+					if(keepPlaying) {
+						if(endReached) {
+							_playRandomSong();
+							endReached = false;
+						}
+					}
+					try {
+						Thread.currentThread().sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
+		
+		keepPlayingThread.start();
+		
 	}
 }
