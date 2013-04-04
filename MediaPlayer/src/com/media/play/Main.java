@@ -56,6 +56,17 @@ public class Main extends JFrame {
 	public static MediaPlayer mediaPlayer = null;
 	private static JSlider slider_1 = new JSlider();
 	private static int SONG_COUNT = 0;
+	
+	 
+	public static int S_NORMAL = 0;
+	public static int S_PLAY = 1;
+	public static int S_NEXT = 2;
+	public static int S_PREVIOUS = 3;
+	public static int S_RANDOM = 4;
+	public static int S_STOP = 5;
+	
+	
+	public static int PLAYER_STATE = S_NORMAL;
 
 	public static boolean keepPlaying = false;
 	public static boolean endReached = false;
@@ -158,8 +169,8 @@ public class Main extends JFrame {
 	
 	private static String getHttpUrl() {
 		//return getPropertyFromConfigFile("PLAYLIST_FILE");
-		return new String("http://localhost/~giri/_songs_.txt");
-		//return new String("http://199.199.199.31/_songs_.txt");
+		//return new String("http://localhost/~giri/_songs_.txt");
+		return new String("http://199.199.199.31/_songs_.txt");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -642,7 +653,7 @@ public class Main extends JFrame {
 		contentPane.add(lblNext);
 		
 		JLabel lblRandom = new JLabel("Random");
-		lblRandom.setBounds(35, 183, 132, 15);
+		lblRandom.setBounds(35, 193, 132, 15);
 		contentPane.add(lblRandom);
 		
 		JLabel lblPrevious = new JLabel("Previous");
@@ -650,11 +661,11 @@ public class Main extends JFrame {
 		contentPane.add(lblPrevious);
 		
 		JLabel lblStop = new JLabel("Stop");
-		lblStop.setBounds(207, 183, 132, 15);
+		lblStop.setBounds(207, 193, 132, 15);
 		contentPane.add(lblStop);
 		
 		JLabel lblExit = new JLabel("Exit");
-		lblExit.setBounds(375, 183, 132, 15);
+		lblExit.setBounds(375, 193, 132, 15);
 		contentPane.add(lblExit);
 		
 		
@@ -711,7 +722,7 @@ public class Main extends JFrame {
 				}
 			}
 		});
-		chckbxMute.setBounds(329, 442, 69, 23);
+		chckbxMute.setBounds(307, 442, 69, 23);
 		contentPane.add(chckbxMute);
 		
 		final JCheckBox chckbxKeepPlaying = new JCheckBox("Keep Playing");
@@ -725,7 +736,7 @@ public class Main extends JFrame {
 				}
 			}
 		});
-		chckbxKeepPlaying.setBounds(410, 442, 116, 23);
+		chckbxKeepPlaying.setBounds(375, 442, 147, 23);
 		contentPane.add(chckbxKeepPlaying);
 		
 		textField_1 = new JTextField();
@@ -763,5 +774,41 @@ public class Main extends JFrame {
 		
 		keepPlayingThread.start();
 		
+		Thread playCommandThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while(true) {
+					// System.out.println("...");
+					try {
+						if(PLAYER_STATE == S_PLAY) {
+							System.out.println("# Command received to play...");
+							_playSongIndex(CURRENT_INDEX);
+						} else if(PLAYER_STATE == S_NEXT) {
+							System.out.println("# Command received to play next...");
+							_playNext();
+						} else if(PLAYER_STATE == S_PREVIOUS) {
+							System.out.println("# Command received to play previous...");
+							_playPrevious();
+						} else if(PLAYER_STATE == S_RANDOM) {
+							System.out.println("# Command received to play random...");
+							_playRandomSong();
+						} else if(PLAYER_STATE == S_STOP) {
+							System.out.println("# Command received to stop play...");
+							_stopPlaying();
+						}
+						
+						PLAYER_STATE = S_NORMAL;
+						
+						Thread.currentThread().sleep(300);
+					} catch(Exception e) {
+						System.out.println("Error in sending commands to player object.");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		playCommandThread.start();
 	}
 }
