@@ -397,7 +397,7 @@ public class Main extends JFrame {
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 643, 558);
+		setBounds(100, 100, 643, 532);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -420,7 +420,7 @@ public class Main extends JFrame {
 				_playSongIndex(CURRENT_INDEX);
 			}
 		});
-		btnNewButton.setBounds(35, 54, 232, 72);
+		btnNewButton.setBounds(35, 54, 132, 102);
 		contentPane.add(btnNewButton);
 		
 		final JButton btnNewButton_1 = new JButton("");
@@ -440,7 +440,7 @@ public class Main extends JFrame {
 				_stopPlaying();
 			}
 		});
-		btnNewButton_1.setBounds(35, 285, 232, 72);
+		btnNewButton_1.setBounds(207, 220, 132, 102);
 		contentPane.add(btnNewButton_1);
 		
 		final JButton btnPlayNext = new JButton("");
@@ -460,7 +460,7 @@ public class Main extends JFrame {
 				_playNext();
 			}
 		});
-		btnPlayNext.setBounds(299, 54, 232, 72);
+		btnPlayNext.setBounds(207, 54, 132, 102);
 		contentPane.add(btnPlayNext);
 		
 		final JButton btnPlayPrevious = new JButton("");
@@ -480,7 +480,7 @@ public class Main extends JFrame {
 				_playPrevious();
 			}
 		});
-		btnPlayPrevious.setBounds(299, 169, 232, 72);
+		btnPlayPrevious.setBounds(375, 54, 132, 102);
 		contentPane.add(btnPlayPrevious);
 		
 		final JButton btnPlayRandom = new JButton("");
@@ -500,7 +500,7 @@ public class Main extends JFrame {
 				_playRandomSong();
 			}
 		});
-		btnPlayRandom.setBounds(35, 169, 232, 72);
+		btnPlayRandom.setBounds(35, 220, 132, 102);
 		contentPane.add(btnPlayRandom);
 		
 		final JButton btnExit = new JButton("");
@@ -525,11 +525,11 @@ public class Main extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnExit.setBounds(299, 285, 232, 72);
+		btnExit.setBounds(375, 220, 132, 102);
 		contentPane.add(btnExit);
 		
 
-		progressBar.setBounds(35, 430, 232, 16);
+		progressBar.setBounds(35, 400, 232, 16);
 		contentPane.add(progressBar);
 		
 		
@@ -639,64 +639,66 @@ public class Main extends JFrame {
 		});
 		
 				
-		slider.setBounds(279, 418, 252, 39);
+		slider.setBounds(297, 388, 252, 39);
 		contentPane.add(slider);
 		
 		JLabel lblProgress = new JLabel("Progress");
-		lblProgress.setBounds(35, 390, 232, 16);
+		lblProgress.setBounds(46, 360, 121, 16);
 		contentPane.add(lblProgress);
 		
 		JLabel lblTrackControl = new JLabel("Jump Track");
-		lblTrackControl.setBounds(287, 390, 232, 16);
+		lblTrackControl.setBounds(317, 360, 116, 16);
 		contentPane.add(lblTrackControl);
 		
 		JLabel lblLabel = new JLabel("Play");
-		lblLabel.setBounds(35, 27, 232, 15);
+		lblLabel.setBounds(35, 27, 132, 15);
 		contentPane.add(lblLabel);
 		
 		JLabel lblNext = new JLabel("Next");
-		lblNext.setBounds(299, 27, 232, 15);
+		lblNext.setBounds(207, 27, 132, 15);
 		contentPane.add(lblNext);
 		
 		JLabel lblRandom = new JLabel("Random");
-		lblRandom.setBounds(35, 142, 232, 15);
+		lblRandom.setBounds(35, 183, 132, 15);
 		contentPane.add(lblRandom);
 		
 		JLabel lblPrevious = new JLabel("Previous");
-		lblPrevious.setBounds(299, 142, 232, 15);
+		lblPrevious.setBounds(375, 27, 132, 15);
 		contentPane.add(lblPrevious);
 		
 		JLabel lblStop = new JLabel("Stop");
-		lblStop.setBounds(35, 258, 232, 15);
+		lblStop.setBounds(207, 183, 132, 15);
 		contentPane.add(lblStop);
 		
 		JLabel lblExit = new JLabel("Exit");
-		lblExit.setBounds(299, 258, 232, 15);
+		lblExit.setBounds(375, 183, 132, 15);
 		contentPane.add(lblExit);
 		
 		
 		slider_1.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				int actualIntValue = slider_1.getValue();
-				textField.setText(Integer.toString(actualIntValue));
-				double volumeValue = (double) ((double) slider_1.getValue() / (double) 100.0 );
-				if(volumeValue >= 1.0) {
-					volumeValue = 1.0;
+				if(mediaPlayer != null) {
+					int actualIntValue = slider_1.getValue();
+					textField.setText(Integer.toString(actualIntValue));
+					double volumeValue = (double) ((double) slider_1.getValue() / (double) 100.0 );
+					if(volumeValue >= 1.0) {
+						volumeValue = 1.0;
+					}
+					if(volumeValue <= 0.0) {
+						volumeValue = 0.0;
+					}
+					mediaPlayer.setVolume(volumeValue);
 				}
-				if(volumeValue <= 0.0) {
-					volumeValue = 0.0;
-				}
-				mediaPlayer.setVolume(volumeValue);
 			}
 			
 		});
 		slider_1.setOrientation(SwingConstants.VERTICAL);
-		slider_1.setBounds(558, 54, 42, 352);
+		slider_1.setBounds(558, 54, 42, 362);
 		contentPane.add(slider_1);
 		
 		JLabel lblVolume = new JLabel("Volume");
 		lblVolume.setHorizontalAlignment(SwingConstants.CENTER);
-		lblVolume.setBounds(539, 26, 61, 16);
+		lblVolume.setBounds(550, 26, 61, 16);
 		contentPane.add(lblVolume);
 		
 		textField = new JTextField();
@@ -708,7 +710,7 @@ public class Main extends JFrame {
 			}
 		});
 		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		textField.setBounds(552, 418, 61, 28);
+		textField.setBounds(550, 440, 61, 28);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
@@ -716,15 +718,17 @@ public class Main extends JFrame {
 		chckbxMute.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (chckbxMute.isSelected()) {
-					mediaPlayer.setMute(true);
-				}
-				if(!chckbxMute.isSelected()) {
-					mediaPlayer.setMute(false);
+				if(mediaPlayer != null) {
+					if (chckbxMute.isSelected()) {
+						mediaPlayer.setMute(true);
+					}
+					if(!chckbxMute.isSelected()) {
+						mediaPlayer.setMute(false);
+					}
 				}
 			}
 		});
-		chckbxMute.setBounds(317, 477, 69, 23);
+		chckbxMute.setBounds(329, 442, 69, 23);
 		contentPane.add(chckbxMute);
 		
 		final JCheckBox chckbxKeepPlaying = new JCheckBox("Keep Playing");
@@ -738,19 +742,19 @@ public class Main extends JFrame {
 				}
 			}
 		});
-		chckbxKeepPlaying.setBounds(421, 477, 116, 23);
+		chckbxKeepPlaying.setBounds(410, 442, 116, 23);
 		contentPane.add(chckbxKeepPlaying);
 		
 		textField_1 = new JTextField();
 		textField_1.setEditable(false);
 		textField_1.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_1.setBounds(173, 475, 69, 28);
+		textField_1.setBounds(155, 440, 69, 28);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 		
 		JLabel lblComplete = new JLabel("% Complete");
 		lblComplete.setHorizontalAlignment(SwingConstants.CENTER);
-		lblComplete.setBounds(64, 481, 97, 16);
+		lblComplete.setBounds(46, 446, 97, 16);
 		contentPane.add(lblComplete);
 		
 		Thread keepPlayingThread = new Thread(new Runnable() {
