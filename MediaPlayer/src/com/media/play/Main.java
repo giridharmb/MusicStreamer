@@ -47,6 +47,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.List;
 
 public class Main extends JFrame {
 
@@ -105,6 +106,7 @@ public class Main extends JFrame {
 		private static int ICON_HOVER_EXIT = 11;
 		private static JTextField textField;
 		public static JTextField textField_1;
+		private static List list = new List();
 	
 	
 	private static LinkedList<String> getFileLines(String filePath) {
@@ -169,8 +171,8 @@ public class Main extends JFrame {
 	
 	private static String getHttpUrl() {
 		//return getPropertyFromConfigFile("PLAYLIST_FILE");
-		//return new String("http://localhost/~giri/_songs_.txt");
-		return new String("http://199.199.199.31/_songs_.txt");
+		return new String("http://localhost/~giri/_songs_.txt");
+		//return new String("http://199.199.199.31/_songs_.txt");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -239,7 +241,39 @@ public class Main extends JFrame {
 		btn.setIcon(arrayOfImageIcons[iconType]);
 	}
 	
-	private LinkedList<String> getSongsFromFile() {
+	private static String getFileNameFromUrl(String url) {
+		String urlCopy = new String(url);
+		String retStr;
+		int slashIndex = url.lastIndexOf("/");
+		
+		String fullFileWithExtension = url.substring(slashIndex+1, url.length());
+		
+		int dotIndex = fullFileWithExtension.lastIndexOf(".");
+		
+		retStr  = fullFileWithExtension.substring(0, dotIndex);
+		
+		// replace multiple _ characters with a single space
+		// replace multiple dot with a single space
+		retStr = retStr.replaceAll("_+"," ");
+		retStr = retStr.replaceAll("\\.+"," ");
+		return retStr;
+	}
+	
+	private static void populateListWithStrings(List myList, LinkedList<String> ll) {
+		int index = 0;
+		for(String s : ll) {
+			myList.add(getFileNameFromUrl(s), index);
+			index++;
+		}
+	}
+	
+	private static void populateMainList() {
+		LinkedList<String> ll = new LinkedList<String>();
+		ll = getSongsFromFile();
+		populateListWithStrings(list,ll);
+	}
+	
+	private static LinkedList<String> getSongsFromFile() {
 		LinkedList<String> ll = new LinkedList<String>();
 		ll = getFileLines(getCompletePathToLocalFile());
 		return ll;
@@ -276,6 +310,7 @@ public class Main extends JFrame {
 		System.out.println("@ _playPrevious(): Playing Song with Index : " + Integer.toString(CURRENT_INDEX));
 		_playSongIndex(CURRENT_INDEX);
 	}
+	
 	
 	private synchronized void _playPrevious() {
 		LinkedList<String> ll = new LinkedList<String>();
@@ -391,7 +426,7 @@ public class Main extends JFrame {
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 643, 532);
+		setBounds(100, 100, 1024, 525);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -408,10 +443,21 @@ public class Main extends JFrame {
 			public void mouseExited(MouseEvent e) {
 				setImageForButtonNew(btnNewButton,ICON_NORMAL_PLAY);
 			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
 		});
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_playSongIndex(CURRENT_INDEX);
+				if(list.getItemCount() > 0 && list.getSelectedIndex() != -1) {
+					System.out.println("list box item selected ! item index >> " + Integer.toString(list.getSelectedIndex()));
+					CURRENT_INDEX = list.getSelectedIndex();
+					_playSongIndex(list.getSelectedIndex());
+					
+				} else {
+					System.out.println("list box item not selected ! playing media with index >> " + Integer.toString(CURRENT_INDEX));
+					_playSongIndex(CURRENT_INDEX);
+				}
 			}
 		});
 		btnNewButton.setBounds(35, 54, 132, 102);
@@ -687,12 +733,12 @@ public class Main extends JFrame {
 			
 		});
 		slider_1.setOrientation(SwingConstants.VERTICAL);
-		slider_1.setBounds(558, 54, 42, 362);
+		slider_1.setBounds(543, 54, 42, 268);
 		contentPane.add(slider_1);
 		
 		JLabel lblVolume = new JLabel("Volume");
 		lblVolume.setHorizontalAlignment(SwingConstants.CENTER);
-		lblVolume.setBounds(550, 26, 61, 16);
+		lblVolume.setBounds(533, 26, 61, 16);
 		contentPane.add(lblVolume);
 		
 		textField = new JTextField();
@@ -704,7 +750,7 @@ public class Main extends JFrame {
 			}
 		});
 		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		textField.setBounds(550, 440, 61, 28);
+		textField.setBounds(533, 348, 61, 28);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
@@ -750,6 +796,15 @@ public class Main extends JFrame {
 		lblComplete.setHorizontalAlignment(SwingConstants.CENTER);
 		lblComplete.setBounds(46, 446, 97, 16);
 		contentPane.add(lblComplete);
+		
+
+		list.setMultipleSelections(false);
+		list.setBounds(637, 54, 353, 414);
+		contentPane.add(list);
+		
+		JLabel lblPlaylist = new JLabel("Playlist");
+		lblPlaylist.setBounds(637, 26, 61, 16);
+		contentPane.add(lblPlaylist);
 		
 		Thread keepPlayingThread = new Thread(new Runnable() {
 			@Override
@@ -810,5 +865,7 @@ public class Main extends JFrame {
 		});
 		
 		playCommandThread.start();
+		
+		populateMainList();
 	}
 }
