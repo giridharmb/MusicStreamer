@@ -296,6 +296,8 @@ public class Main extends JFrame {
 		CURRENT_INDEX = index;
 		System.out.println("@ getRandomSongURL(): CURRENT_INDEX = " + Integer.toString(CURRENT_INDEX));
 		System.out.println("@ getRandomSongURL(): Returning song >> [" + ll.get(CURRENT_INDEX)+"]");
+		list.select(CURRENT_INDEX);
+		list.makeVisible(CURRENT_INDEX);
 		return ll.get(CURRENT_INDEX);
 	}
 	
@@ -308,7 +310,9 @@ public class Main extends JFrame {
 			CURRENT_INDEX = 0;
 		}
 		System.out.println("@ _playPrevious(): Playing Song with Index : " + Integer.toString(CURRENT_INDEX));
+		list.select(CURRENT_INDEX);
 		_playSongIndex(CURRENT_INDEX);
+		list.makeVisible(CURRENT_INDEX);
 	}
 	
 	
@@ -321,7 +325,9 @@ public class Main extends JFrame {
 			CURRENT_INDEX = SONG_COUNT - 1; 
 		}
 		System.out.println("@ _playPrevious(): Playing Song with Index : " + Integer.toString(CURRENT_INDEX));
+		list.select(CURRENT_INDEX);
 		_playSongIndex(CURRENT_INDEX);
+		list.makeVisible(CURRENT_INDEX);
 	}
 	
 	private synchronized void _playRandomSong() {
@@ -452,8 +458,9 @@ public class Main extends JFrame {
 				if(list.getItemCount() > 0 && list.getSelectedIndex() != -1) {
 					System.out.println("list box item selected ! item index >> " + Integer.toString(list.getSelectedIndex()));
 					CURRENT_INDEX = list.getSelectedIndex();
-					_playSongIndex(list.getSelectedIndex());
-					
+					_playSongIndex(CURRENT_INDEX);
+					list.makeVisible(CURRENT_INDEX);
+				
 				} else {
 					System.out.println("list box item not selected ! playing media with index >> " + Integer.toString(CURRENT_INDEX));
 					_playSongIndex(CURRENT_INDEX);
