@@ -1,5 +1,7 @@
 package com.media.play;
 
+import de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel;
+
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -15,6 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -48,6 +51,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.List;
+import java.awt.Font;
 
 public class Main extends JFrame {
 
@@ -58,6 +62,8 @@ public class Main extends JFrame {
 	private static JSlider slider_1 = new JSlider();
 	private static int SONG_COUNT = 0;
 	
+	private SystemTray tray = SystemTray.getSystemTray();
+	private Toolkit toolkit = Toolkit.getDefaultToolkit();
 	 
 	public static int S_NORMAL = 0;
 	public static int S_PLAY = 1;
@@ -171,8 +177,8 @@ public class Main extends JFrame {
 	
 	private static String getHttpUrl() {
 		//return getPropertyFromConfigFile("PLAYLIST_FILE");
-		return new String("http://localhost/~giri/_songs_.txt");
-		//return new String("http://199.199.199.31/_songs_.txt");
+		//return new String("http://localhost/~giri/_songs_.txt");
+		return new String("http://199.199.199.31/_songs_.txt");
 	}
 	
 	private static String getCompletePathToLocalFile() {
@@ -394,6 +400,7 @@ public class Main extends JFrame {
 		} catch(Exception e) {
 			System.out.println("Error - could not enable antialiasing !");
 		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -405,8 +412,8 @@ public class Main extends JFrame {
 					/* make sure use run this command on Mac OSX to avoid the exception:
 					 * 	$ sudo touch /private/var/db/.AccessibilityAPIEnabled
 					 */
-					GlobalKeyListener gkl = new GlobalKeyListener();
-					gkl.setup();
+					//GlobalKeyListener gkl = new GlobalKeyListener();
+					//gkl.setup();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -420,19 +427,14 @@ public class Main extends JFrame {
 	 * Create the frame.
 	 */
 	public Main() {
-		try {
-	            // Set cross-platform Java L&F (also called "Metal")
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    } catch(Exception e) {
-	    	System.out.println("Could not change the look and feel !");
-	    }
+		
 		
 		
 		setResizable(false);
 		setTitle("Music Streamer - \u00A9 Giridhar Bhujanga (giridharmb@gmail.com)");
 			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1024, 525);
+		setBounds(100, 100, 1260, 525);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -585,11 +587,9 @@ public class Main extends JFrame {
 		} else {
 
 			System.out.println("@ System Tray is supported !");
-			SystemTray tray = SystemTray.getSystemTray();
-			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			
 			Image image = toolkit.getImage(getClass().getResource("/resources/images/play-button-01.png"));
 		
-
 			MenuItem messageItem_play          = new MenuItem("Play");
 			MenuItem messageItem_stop          = new MenuItem("Stop");
 			MenuItem messageItem_playnext      = new MenuItem("Next");
@@ -648,11 +648,201 @@ public class Main extends JFrame {
 				}
 			});
 			
+			/*
+			arrayOfImageIcons[ICON_NORMAL_PLAY] = new ImageIcon(getClass().getResource("/resources/images/icon_play.png"));
+			arrayOfImageIcons[ICON_NORMAL_NEXT] = new ImageIcon(getClass().getResource("/resources/images/icon_next.png"));
+			arrayOfImageIcons[ICON_NORMAL_PREVIOUS] = new ImageIcon(getClass().getResource("/resources/images/icon_previous.png"));
+			arrayOfImageIcons[ICON_NORMAL_RANDOM] = new ImageIcon(getClass().getResource("/resources/images/icon_random.png"));
+			arrayOfImageIcons[ICON_NORMAL_STOP] = new ImageIcon(getClass().getResource("/resources/images/icon_stop.png"));
+			arrayOfImageIcons[ICON_NORMAL_EXIT] = new ImageIcon(getClass().getResource("/resources/images/icon_exit.png"));
+			Image icong_image_play = toolkit.getImage(getClass().getResource("/resources/images/play-button-01.png"));
+			*/
+			Image img_play = toolkit.getImage(getClass().getResource("/nuvola/n_play.png"));
+			Image img_next = toolkit.getImage(getClass().getResource("/nuvola/n_next.png"));
+			Image img_previous = toolkit.getImage(getClass().getResource("/nuvola/n_previous.png"));
+			Image img_random = toolkit.getImage(getClass().getResource("/nuvola/n_random.png"));
+			Image img_stop = toolkit.getImage(getClass().getResource("/nuvola/n_stop.png"));
+			
+			TrayIcon icon_img_play = new TrayIcon(img_play,"Play");
+			TrayIcon icon_img_next = new TrayIcon(img_next,"Next");
+			TrayIcon icon_img_previous = new TrayIcon(img_previous,"Previous");
+			TrayIcon icon_img_random = new TrayIcon(img_random,"Random");
+			TrayIcon icon_img_stop = new TrayIcon(img_stop,"Stop");
+			
+			
+			icon_img_play.setImageAutoSize(true);
+			icon_img_next.setImageAutoSize(true);
+			icon_img_previous.setImageAutoSize(true);
+			icon_img_random.setImageAutoSize(true);
+			icon_img_stop.setImageAutoSize(true);
+			
+			icon_img_play.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("@ Play Pressed...");
+					_playSongIndex(CURRENT_INDEX);
+				}
+
+				@Override public void mousePressed(MouseEvent e) {  // TODO Auto-generated method stub
 					
-			TrayIcon icon = new TrayIcon(image,"System Tray", menu);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			icon_img_next.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("@ Playing Next...");
+					_playNext();
+				}
+
+				@Override public void mousePressed(MouseEvent e) {  // TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			icon_img_previous.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("@ Playing Previous...");
+					_playPrevious();
+				}
+
+				@Override public void mousePressed(MouseEvent e) {  // TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			icon_img_random.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("@ Random Pressed !");
+					_playRandomSong();
+				}
+
+				@Override public void mousePressed(MouseEvent e) {  // TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			
+			icon_img_stop.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println("@ Stop Playing Pressed !");
+					_stopPlaying();
+				}
+
+				@Override public void mousePressed(MouseEvent e) {  // TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+
+					
+				
+					
+					
+					
+			
+				TrayIcon icon = new TrayIcon(image,"System Tray", menu);
+			
 			icon.setImageAutoSize(true);
 			try {
-				tray.add(icon);
+				//tray.add(icon);
+				tray.add(icon_img_play);
+				tray.add(icon_img_next);
+				tray.add(icon_img_random);
+				tray.add(icon_img_previous);
+				tray.add(icon_img_stop);
+
 			} catch (AWTException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -803,10 +993,11 @@ public class Main extends JFrame {
 		lblComplete.setHorizontalAlignment(SwingConstants.CENTER);
 		lblComplete.setBounds(46, 446, 97, 16);
 		contentPane.add(lblComplete);
+		list.setFont(new Font("Arial", Font.PLAIN, 11));
 		
 
 		list.setMultipleSelections(false);
-		list.setBounds(637, 54, 353, 414);
+		list.setBounds(637, 54, 567, 414);
 		contentPane.add(list);
 		
 		JLabel lblPlaylist = new JLabel("Playlist");
